@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const reviews = await getCollection('reviews');
+  return reviews.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const d = entry.data;
+const dateStr = d.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+<Base title={`${d.artist} — ${d.album} | salbum`} description={d.title}>
+  <article class="prose stitched">
+    <div class="above-stitch" style="padding: 8px;">
+      <p class="meta">Review · {dateStr}</p>
+      <h1>{d.title}</h1>
+      <p style="font-family: var(--mono); font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin: 6px 0 0;">
+        {d.artist} — <i>{d.album}</i>
+        {d.label && ` (${d.label}${d.year ? `, ${d.year}` : ''})`}
+      </p>
+
+      <div class="tldr large">
+        {d.tldr.map((t) => <span>{t}</span>)}
+      </div>
+
+      <Content />
+    </div>
+  </article>
+</Base>

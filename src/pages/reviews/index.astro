@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ReviewCard from '../../components/ReviewCard.astro';
+
+const reviews = (await getCollection('reviews')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+<Base title="Reviews — salbum">
+  <div class="section">
+    <span class="stamp">All</span>
+    <h2>Reviews</h2>
+    <div class="rule"></div>
+  </div>
+
+  <div class="review-grid">
+    {reviews.map((r) => <ReviewCard entry={r} />)}
+  </div>
+</Base>

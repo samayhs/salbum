@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import ListCard from '../components/ListCard.astro';
+
+const reviews = (await getCollection('reviews')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const featured = reviews.find((r) => r.data.featured) ?? reviews[0];
+const otherReviews = reviews.filter((r) => r.slug !== featured?.slug).slice(0, 6);
+
+const lists = (await getCollection('lists')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const latestList = lists[0];
+---
+<Base title="salbum">
+  {featured && (
+    <section style="margin-bottom: 22px;">
+      <ReviewCard entry={featured} featured={true} />
+    </section>
+  )}
+
+  <div class="section">
+    <span class="stamp">№ 01</span>
+    <h2>Latest reviews</h2>
+    <div class="rule"></div>
+  </div>
+
+  <div class="review-grid">
+    {otherReviews.map((r) => <ReviewCard entry={r} />)}
+  </div>
+
+  {latestList && (
+    <>
+      <div class="section">
+        <span class="stamp">№ 02</span>
+        <h2>The lists</h2>
+        <div class="rule"></div>
+      </div>
+      <ListCard entry={latestList} limit={8} />
+    </>
+  )}
+</Base>

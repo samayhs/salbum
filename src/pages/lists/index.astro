@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ListCard from '../../components/ListCard.astro';
+
+const lists = (await getCollection('lists')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+<Base title="Lists — salbum">
+  <div class="section">
+    <span class="stamp">All</span>
+    <h2>Lists</h2>
+    <div class="rule"></div>
+  </div>
+
+  <div style="display: grid; gap: 18px;">
+    {lists.map((l) => <ListCard entry={l} limit={6} />)}
+  </div>
+</Base>

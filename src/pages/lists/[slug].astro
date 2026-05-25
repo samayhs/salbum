@@ -1,0 +1,49 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const lists = await getCollection('lists');
+  return lists.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const d = entry.data;
+const dateStr = d.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const colorClass = d.color === 'umber' ? 'umber' : d.color === 'indigo' ? 'indigo' : '';
+---
+<Base title={`${d.title} | salbum`}>
+  <article class="prose stitched" style="background: var(--paper-soft);">
+    <div class="above-stitch" style="padding: 8px;">
+      <p class="meta">List · {dateStr}</p>
+      <h1>{d.title}</h1>
+      {d.kicker && <p style="font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7;">{d.kicker}</p>}
+
+      <Content />
+
+      <div class={`list-card on-dark stitched ${colorClass}`} style="margin-top: 24px;">
+        <div class="above-stitch" style="padding: 4px;">
+          <ol>
+            {d.entries.map((item, i) => (
+              <li style="flex-wrap: wrap;">
+                <span class="list-num">{String(i + 1).padStart(2, '0')}</span>
+                <span><strong>{item.track}</strong> <span class="list-art">— {item.artist}</span></span>
+                {item.note && (
+                  <p style="flex-basis: 100%; margin: 4px 0 4px 44px; font-size: 13px; opacity: 0.8; font-style: italic;">{item.note}</p>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </article>
+</Base>

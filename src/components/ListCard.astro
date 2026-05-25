@@ -1,0 +1,23 @@
+---
+const { entry, limit = 5 } = Astro.props;
+const { data, slug } = entry;
+const items = data.entries.slice(0, limit);
+const colorClass = data.color === 'umber' ? 'umber' : data.color === 'indigo' ? 'indigo' : '';
+---
+<a href={`/lists/${slug}/`} style="text-decoration: none;">
+  <div class={`list-card on-dark stitched ${colorClass}`}>
+    <div class="above-stitch" style="padding: 4px;">
+      {data.kicker && <p class="kicker">{data.kicker}</p>}
+      <h3>{data.title}</h3>
+      <ol>
+        {items.map((item, i) => (
+          <li>
+            <span class="list-num">{String(i + 1).padStart(2, '0')}</span>
+            <span>{item.track}</span>
+            <span class="list-art">— {item.artist}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</a>

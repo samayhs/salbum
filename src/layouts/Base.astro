@@ -1,0 +1,46 @@
+---
+import '../styles/global.css';
+const { title = 'salbum', description = 'A music blog stitched together by hand.' } = Astro.props;
+const path = Astro.url.pathname;
+const isCurrent = (p) => path === p || (p !== '/' && path.startsWith(p));
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="room">
+      <div class="page stitched-bold">
+        <div class="above-stitch">
+          <header class="masthead">
+            <h1><a href="/" style="color:inherit;text-decoration:none;">s<em>alb</em>um</a></h1>
+            <div class="masthead-sub">A music blog stitched together by hand · est. 2026</div>
+          </header>
+
+          <nav class="nav" aria-label="Primary">
+            <a href="/" aria-current={path === '/' ? 'page' : undefined}>Home</a>
+            <a href="/reviews/" aria-current={isCurrent('/reviews') ? 'page' : undefined}>Reviews</a>
+            <a href="/lists/" aria-current={isCurrent('/lists') ? 'page' : undefined}>Lists</a>
+            <a href="/about/" aria-current={isCurrent('/about') ? 'page' : undefined}>About</a>
+          </nav>
+
+          <main>
+            <slot />
+          </main>
+
+          <footer class="foot">
+            <span>Updated when the mood strikes · No ads · No algorithm</span>
+            <span>RSS // Newsletter // @salbum</span>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

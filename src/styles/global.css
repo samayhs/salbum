@@ -1,0 +1,393 @@
+/* ===== salbum: hand-stitched zine theme ===== */
+
+:root {
+  /* warm room */
+  --paper: #F0997B;        /* coral wall */
+  --paper-soft: #FAEEDA;   /* card paper */
+  --paper-deep: #4A1B0C;   /* ink */
+
+  /* warm accents */
+  --warm-amber: #FAC775;
+  --warm-rust: #D85A30;
+  --warm-pink: #ED93B1;
+
+  /* dark standouts */
+  --dark-1: #4A1B0C;       /* burnt umber */
+  --dark-2: #04342C;       /* forest */
+  --dark-3: #26215C;       /* indigo */
+
+  /* the gold thread */
+  --stitch: #BA7517;
+  --stitch-bright: #EF9F27;
+
+  --serif: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--paper-deep);
+  font-family: var(--sans);
+  line-height: 1.6;
+}
+
+/* Reusable stitched border:
+   apply .stitched to any element to get a dashed gold inner border.
+   .stitched-tight for thinner items, .stitched-bold for hero pieces. */
+
+.stitched,
+.stitched-tight,
+.stitched-bold {
+  position: relative;
+  border-radius: 4px;
+}
+.stitched::before,
+.stitched-tight::before,
+.stitched-bold::before {
+  content: "";
+  position: absolute;
+  border: 2px dashed var(--stitch);
+  border-radius: 3px;
+  pointer-events: none;
+}
+.stitched::before        { inset: 6px; }
+.stitched-tight::before  { inset: 4px; border-width: 1.5px; }
+.stitched-bold::before   { inset: 8px; border-width: 2.5px; }
+
+/* On dark surfaces, stitch goes bright gold */
+.on-dark.stitched::before,
+.on-dark.stitched-tight::before,
+.on-dark.stitched-bold::before {
+  border-color: var(--stitch-bright);
+}
+
+/* Use this on any inner wrapper that should sit above the ::before stitch */
+.above-stitch { position: relative; z-index: 1; }
+
+/* Layout */
+
+.room {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 20px;
+}
+
+.page {
+  background: var(--paper);
+  padding: 20px;
+  border-radius: 6px;
+}
+
+/* Masthead */
+
+.masthead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 2.5px dashed var(--stitch);
+  margin-bottom: 18px;
+}
+.masthead h1 {
+  font-family: var(--serif);
+  font-size: clamp(48px, 9vw, 84px);
+  font-weight: 500;
+  line-height: 0.85;
+  margin: 0;
+  letter-spacing: -3px;
+  color: var(--paper-deep);
+  transform: skew(-4deg);
+}
+.masthead h1 em {
+  font-style: italic;
+  color: var(--dark-2);
+}
+.masthead-sub {
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--paper-deep);
+  max-width: 240px;
+  line-height: 1.5;
+}
+
+/* Nav */
+
+.nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.nav a {
+  padding: 4px 10px;
+  border: 1.5px dashed var(--stitch);
+  background: var(--paper-soft);
+  color: var(--paper-deep);
+  text-decoration: none;
+}
+.nav a:hover,
+.nav a[aria-current="page"] {
+  background: var(--paper-deep);
+  color: var(--paper-soft);
+  border-style: solid;
+  border-color: var(--stitch-bright);
+}
+
+/* Section heading */
+
+.section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 26px 0 14px;
+}
+.section h2 {
+  font-family: var(--serif);
+  font-size: clamp(24px, 4vw, 32px);
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  color: var(--paper-deep);
+  transform: skew(-3deg);
+}
+.section .stamp {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border: 1.5px dashed var(--stitch);
+  padding: 3px 8px;
+  color: var(--paper-deep);
+  background: var(--paper-soft);
+}
+.section .rule {
+  flex: 1;
+  border-top: 2px dashed var(--stitch);
+}
+
+/* Cards / grids */
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  margin: 0 0 8px;
+  opacity: 0.85;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+.review-card {
+  background: var(--paper-soft);
+  padding: 12px;
+  color: var(--paper-deep);
+}
+.review-card:nth-child(3n+1) { transform: rotate(-0.6deg); }
+.review-card:nth-child(3n+2) { transform: rotate(0.5deg); }
+.review-card:nth-child(3n+3) { transform: rotate(-0.3deg); }
+
+.review-card a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cover {
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  background: var(--warm-amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--paper-deep);
+}
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 3px;
+}
+
+.rev-artist {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 4px;
+  opacity: 0.7;
+}
+.rev-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 10px;
+  line-height: 1.15;
+  letter-spacing: -0.3px;
+}
+
+.tldr {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.tldr span {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 3px 7px;
+  border: 1.5px dashed var(--paper-deep);
+  color: var(--paper-deep);
+  background: #FFF;
+}
+.tldr span:nth-child(1) { background: var(--warm-amber); transform: rotate(-1.5deg); }
+.tldr span:nth-child(2) { background: var(--warm-pink); transform: rotate(1deg); }
+.tldr span:nth-child(3) { background: #9FE1CB; transform: rotate(-0.5deg); }
+
+.tldr.large span {
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+/* Lists block */
+
+.list-card {
+  background: var(--dark-2);
+  color: var(--paper-soft);
+  padding: 22px 24px;
+  border-radius: 4px;
+  transform: rotate(-0.3deg);
+}
+.list-card.umber { background: var(--dark-1); }
+.list-card.indigo { background: var(--dark-3); }
+
+.list-card h3 {
+  font-family: var(--serif);
+  font-size: clamp(22px, 3.4vw, 30px);
+  font-weight: 500;
+  margin: 4px 0 14px;
+  letter-spacing: -0.5px;
+}
+.list-card a { color: inherit; text-decoration: none; }
+.list-card ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.list-card li {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1.5px dashed rgba(239, 159, 39, 0.5);
+  align-items: baseline;
+  font-size: 15px;
+}
+.list-card li:last-child { border-bottom: none; }
+.list-num {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 500;
+  min-width: 32px;
+  color: var(--stitch-bright);
+}
+.list-art {
+  font-style: italic;
+  opacity: 0.75;
+  margin-left: 6px;
+  font-size: 13px;
+}
+
+/* Article (review/list detail page) */
+
+article.prose {
+  background: var(--paper-soft);
+  padding: 32px;
+  margin: 0 auto;
+  max-width: 720px;
+  border-radius: 4px;
+  color: var(--paper-deep);
+}
+article.prose h1 {
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -1px;
+  margin: 0 0 8px;
+  font-weight: 500;
+}
+article.prose .meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 18px;
+  opacity: 0.7;
+}
+article.prose .tldr.large {
+  margin: 16px 0 24px;
+}
+article.prose h2 {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 28px;
+  letter-spacing: -0.3px;
+}
+article.prose p {
+  font-size: 17px;
+  line-height: 1.7;
+  margin: 14px 0;
+}
+article.prose blockquote {
+  border-left: 3px dashed var(--stitch);
+  padding-left: 16px;
+  margin: 20px 0;
+  font-style: italic;
+  font-family: var(--serif);
+  font-size: 20px;
+}
+article.prose a {
+  color: var(--dark-2);
+  text-decoration: underline dashed var(--stitch);
+  text-underline-offset: 3px;
+}
+
+/* Footer */
+
+.foot {
+  margin-top: 26px;
+  padding-top: 14px;
+  border-top: 2.5px dashed var(--stitch);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--paper-deep);
+}
