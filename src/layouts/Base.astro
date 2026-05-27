@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-const { title = 'salbum', description = 'A music blog stitched together by hand.' } = Astro.props;
+const { title = 'salbum', description = 'A music blog.' } = Astro.props;
 const path = Astro.url.pathname;
 const isCurrent = (p) => path === p || (p !== '/' && path.startsWith(p));
 ---
@@ -31,12 +31,12 @@ const isCurrent = (p) => path === p || (p !== '/' && path.startsWith(p));
                 </svg></span>lbum
               </a>
             </h1>
-            <div class="masthead-sub">A music blog stitched together by hand · est. 2026</div>
+            <div class="masthead-sub">A mus*c bl*g · est. 2026</div>
           </header>
 
           <nav class="nav" aria-label="Primary">
-            <a href="/" aria-current={path === '/' ? 'page' : undefined}>Home</a>
-            <a href="/reviews/" aria-current={isCurrent('/reviews') ? 'page' : undefined}>Reviews</a>
+            <a href="/" aria-current={path === '/' ? 'page' : undefined}>H*me</a>
+            <a href="/reviews/" aria-current={isCurrent('/reviews') ? 'page' : undefined}>Rev*ews</a>
             <a href="/lists/" aria-current={isCurrent('/lists') ? 'page' : undefined}>Lists</a>
             <a href="/about/" aria-current={isCurrent('/about') ? 'page' : undefined}>About</a>
           </nav>
@@ -46,8 +46,8 @@ const isCurrent = (p) => path === p || (p !== '/' && path.startsWith(p));
           </main>
 
           <footer class="foot">
-            <span>Updated when the mood strikes · No ads · No algorithm</span>
-            <span>RSS // Newsletter // @salbum</span>
+            <span>K*ll the algor*thm</span>
+            <span>links // w*ll // @goh*re</span>
           </footer>
         </div>
       </div>

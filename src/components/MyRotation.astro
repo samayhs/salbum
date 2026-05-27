@@ -21,7 +21,7 @@ const LASTFM_USER    = 'samayhs';
   if (card) {
     const API_KEY = card.getAttribute('data-api-key');
     const USER    = card.getAttribute('data-user');
-    const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${USER}&api_key=${API_KEY}&format=json&period=1month&limit=10`;
+    const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${USER}&api_key=${API_KEY}&format=json&period=1month&limit=5`;
 
     function esc(s) {
       return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -39,7 +39,7 @@ const LASTFM_USER    = 'samayhs';
         list.innerHTML = tracks.map((t, i) => `
           <li>
             <span class="list-num">${String(i + 1).padStart(2, '0')}</span>
-            <span>${esc(t.name)}</span>
+            <span style="font-family: var(--serif);">${esc(t.name)}</span>
             <span class="list-art">— ${esc(t.artist?.name || '')}</span>
           </li>
         `).join('');

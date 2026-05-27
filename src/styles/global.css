@@ -282,11 +282,11 @@ html, body {
   padding: 3px 7px;
   border: 1.5px dashed var(--paper-deep);
   color: var(--paper-deep);
-  background: #FFF;
+  background: var(--paper-soft);
 }
 .tldr span:nth-child(1) { background: var(--warm-amber); transform: rotate(-1.5deg); }
 .tldr span:nth-child(2) { background: var(--warm-pink); transform: rotate(1deg); }
-.tldr span:nth-child(3) { background: #9FE1CB; transform: rotate(-0.5deg); }
+.tldr span:nth-child(3) { background: var(--living-green); color: var(--paper-soft); transform: rotate(-0.5deg); }
 
 .tldr.large span {
   font-size: 14px;
@@ -322,7 +322,7 @@ html, body {
   display: flex;
   gap: 12px;
   padding: 8px 0;
-  border-bottom: 1.5px dashed rgba(239, 159, 39, 0.5);
+  border-bottom: 1.5px dashed rgba(245, 212, 74, 0.5);
   align-items: baseline;
   font-size: 15px;
 }

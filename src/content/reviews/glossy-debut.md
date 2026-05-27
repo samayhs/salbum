@@ -1,11 +1,11 @@
 ---
-title: "All flash, no follow-through"
-artist: "Another Artist"
-album: "Glossy Debut"
-label: "Big Label"
+title: "tbd"
+artist: "tbd"
+album: "tbd"
+label: "tbd"
 year: 2026
 pubDate: 2026-05-15
-tldr: ["Slick", "Hollow", "Skip"]
+tldr: ["word1", "word2", "word3"]
 ---
 
-A first record that mistakes confidence for personality.
+tbd
