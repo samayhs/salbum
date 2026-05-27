@@ -1,0 +1,299 @@
+---
+// ============================================================
+//  LASTFM WIDGET — edit these two lines, that's it
+// ============================================================
+const LASTFM_API_KEY = 'f6ae9b2d73bdb0e7f2b6b8b06ac44563';
+const LASTFM_USER    = 'samayhs';
+// ============================================================
+---
+
+<section class="lastfm-block stitched" data-api-key={LASTFM_API_KEY} data-user={LASTFM_USER}>
+  <div class="above-stitch" style="padding: 6px;">
+    <div class="section" style="margin: 0 0 12px;">
+      <span class="stamp">Scrobbles</span>
+      <h2>From the turntable</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="lastfm-grid">
+      <!-- Now playing -->
+      <div class="lastfm-now">
+        <p class="kicker">Now playing</p>
+        <div class="now-row" id="lastfm-now">
+          <div class="now-cover" id="lastfm-now-cover"></div>
+          <div class="now-text">
+            <p class="now-track" id="lastfm-now-track">Loading…</p>
+            <p class="now-artist" id="lastfm-now-artist"></p>
+            <p class="now-status" id="lastfm-now-status"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top tracks (4 weeks) -->
+      <div class="lastfm-top">
+        <p class="kicker">Top 10 tracks · last 4 weeks</p>
+        <ol class="top-list" id="lastfm-top-list">
+          <li class="top-loading">Loading…</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .lastfm-block {
+    background: var(--warm-amber);
+    color: var(--paper-deep);
+    padding: 16px;
+    border-radius: 4px;
+    margin: 22px 0;
+  }
+  .lastfm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 20px;
+  }
+  @media (max-width: 640px) {
+    .lastfm-grid { grid-template-columns: 1fr; }
+  }
+  .now-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: var(--paper-soft);
+    padding: 10px;
+    border-radius: 4px;
+    border: 1.5px dashed var(--stitch);
+    min-height: 84px;
+  }
+  .now-cover {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    background: var(--warm-rust);
+    border-radius: 3px;
+    background-size: cover;
+    background-position: center;
+  }
+  .now-text { min-width: 0; flex: 1; }
+  .now-track {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .now-artist {
+    font-size: 13px;
+    margin: 2px 0 0;
+    opacity: 0.85;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .now-status {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 6px 0 0;
+    color: var(--dark-2);
+  }
+  .now-status.live::before {
+    content: "●";
+    color: var(--warm-rust);
+    margin-right: 4px;
+    animation: lastfm-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes lastfm-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+  .top-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .lastfm-block .top-list li {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 1px;
+    padding: 7px 0;
+    border-bottom: 1.5px dashed var(--stitch);
+    align-items: baseline;
+  }
+  .lastfm-block .top-list li:last-child { border-bottom: none; }
+  .top-num {
+    grid-row: 1 / span 2;
+    align-self: center;
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--dark-1);
+    line-height: 1;
+  }
+  .top-track {
+    grid-column: 2;
+    grid-row: 1;
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--paper-deep);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .top-artist {
+    grid-column: 2;
+    grid-row: 2;
+    font-style: italic;
+    font-size: 12px;
+    opacity: 0.75;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .top-count {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--paper-soft);
+    color: var(--dark-1);
+    padding: 3px 7px;
+    border: 1.5px dashed var(--stitch);
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .top-loading {
+    opacity: 0.6;
+    font-style: italic;
+    border-bottom: none !important;
+    display: block !important;
+    padding: 7px 0;
+  }
+  .lastfm-error {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dark-1);
+    opacity: 0.7;
+  }
+</style>
+
+<script>
+  // Find this widget's element to read its data attributes
+  const block = document.querySelector('.lastfm-block');
+  if (block) {
+    const API_KEY = block.getAttribute('data-api-key');
+    const USER    = block.getAttribute('data-user');
+    const BASE    = 'https://ws.audioscrobbler.com/2.0/';
+
+    const isPlaceholder = !API_KEY || API_KEY.startsWith('PASTE_');
+
+    async function fetchNowPlaying() {
+      const url = `${BASE}?method=user.getrecenttracks&user=${USER}&api_key=${API_KEY}&format=json&limit=1`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Last.fm error');
+      const data = await res.json();
+      const track = data?.recenttracks?.track;
+      const t = Array.isArray(track) ? track[0] : track;
+      if (!t) return null;
+      return {
+        nowPlaying: t['@attr']?.nowplaying === 'true',
+        name:   t.name,
+        artist: t.artist?.['#text'] || t.artist?.name || '',
+        image:  t.image?.find(i => i.size === 'large')?.['#text'] || '',
+        date:   t.date?.uts ? Number(t.date.uts) * 1000 : null,
+      };
+    }
+
+    async function fetchTopTracks() {
+      const url = `${BASE}?method=user.gettoptracks&user=${USER}&api_key=${API_KEY}&format=json&period=1month&limit=10`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Last.fm error');
+      const data = await res.json();
+      return data?.toptracks?.track || [];
+    }
+
+    function renderNow(t) {
+      const trackEl  = document.getElementById('lastfm-now-track');
+      const artistEl = document.getElementById('lastfm-now-artist');
+      const statusEl = document.getElementById('lastfm-now-status');
+      const coverEl  = document.getElementById('lastfm-now-cover');
+      if (!t) {
+        trackEl.textContent = 'Nothing scrobbled yet';
+        artistEl.textContent = '';
+        statusEl.textContent = '';
+        return;
+      }
+      trackEl.textContent  = t.name;
+      artistEl.textContent = t.artist;
+      if (t.image) coverEl.style.backgroundImage = `url("${t.image}")`;
+      if (t.nowPlaying) {
+        statusEl.className = 'now-status live';
+        statusEl.textContent = 'Live';
+      } else if (t.date) {
+        const mins = Math.round((Date.now() - t.date) / 60000);
+        const ago = mins < 60 ? `${mins} min ago`
+                  : mins < 1440 ? `${Math.round(mins / 60)} hr ago`
+                  : `${Math.round(mins / 1440)} days ago`;
+        statusEl.className = 'now-status';
+        statusEl.textContent = `Last played · ${ago}`;
+      }
+    }
+
+    function renderTop(tracks) {
+      const list = document.getElementById('lastfm-top-list');
+      if (!tracks.length) {
+        list.innerHTML = '<li class="top-loading">No scrobbles yet</li>';
+        return;
+      }
+      list.innerHTML = tracks.map((t, i) => {
+        const n = String(i + 1).padStart(2, '0');
+        return `
+          <li>
+            <span class="top-num">${n}</span>
+            <span class="top-track">${escape(t.name)}</span>
+            <span class="top-artist">${escape(t.artist?.name || '')}</span>
+            <span class="top-count">${t.playcount} plays</span>
+          </li>
+        `;
+      }).join('');
+    }
+
+    function escape(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    function showError(msg) {
+      document.getElementById('lastfm-now-track').textContent = msg;
+      document.getElementById('lastfm-now-artist').textContent = '';
+      document.getElementById('lastfm-now-status').textContent = '';
+      document.getElementById('lastfm-top-list').innerHTML =
+        `<li class="lastfm-error">${escape(msg)}</li>`;
+    }
+
+    if (isPlaceholder) {
+      showError('Add your Last.fm API key in src/components/LastFm.astro');
+    } else {
+      Promise.all([fetchNowPlaying(), fetchTopTracks()])
+        .then(([now, top]) => { renderNow(now); renderTop(top); })
+        .catch(() => showError('Last.fm unavailable'));
+    }
+  }
+</script>

@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import ReviewCard from '../components/ReviewCard.astro';
 import ListCard from '../components/ListCard.astro';
+import LastFm from '../components/LastFm.astro';
 
 const reviews = (await getCollection('reviews')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -31,6 +32,8 @@ const latestList = lists[0];
   <div class="review-grid">
     {otherReviews.map((r) => <ReviewCard entry={r} />)}
   </div>
+
+  <LastFm />
 
   {latestList && (
     <>

@@ -20,7 +20,17 @@ const isCurrent = (p) => path === p || (p !== '/' && path.startsWith(p));
       <div class="page stitched-bold">
         <div class="above-stitch">
           <header class="masthead">
-            <h1><a href="/" style="color:inherit;text-decoration:none;">s<em>alb</em>um</a></h1>
+            <h1>
+              <a href="/" style="color:inherit;text-decoration:none;" aria-label="salbum">
+                s<span class="ast" aria-hidden="true"><svg viewBox="-50 -50 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <g stroke="var(--stitch)" stroke-width="10" stroke-linecap="round" fill="none">
+                    <line x1="-30" y1="2" x2="30" y2="-3"/>
+                    <line x1="-14" y1="-26" x2="18" y2="24"/>
+                    <line x1="-18" y1="26" x2="16" y2="-24"/>
+                  </g>
+                </svg></span>lbum
+              </a>
+            </h1>
             <div class="masthead-sub">A music blog stitched together by hand · est. 2026</div>
           </header>
 
