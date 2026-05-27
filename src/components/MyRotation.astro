@@ -1,0 +1,52 @@
+---
+const LASTFM_API_KEY = 'f6ae9b2d73bdb0e7f2b6b8b06ac44563';
+const LASTFM_USER    = 'samayhs';
+---
+
+<div class="list-card on-dark stitched my-rotation-card"
+     data-api-key={LASTFM_API_KEY}
+     data-user={LASTFM_USER}
+     style="margin: 22px 0;">
+  <div class="above-stitch" style="padding: 4px;">
+    <p class="kicker">Last.fm · last 4 weeks</p>
+    <h3>My rotation</h3>
+    <ol id="my-rotation-list">
+      <li><span class="list-num">—</span> <span style="opacity:0.6; font-style:italic;">Loading…</span></li>
+    </ol>
+  </div>
+</div>
+
+<script>
+  const card = document.querySelector('.my-rotation-card');
+  if (card) {
+    const API_KEY = card.getAttribute('data-api-key');
+    const USER    = card.getAttribute('data-user');
+    const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${USER}&api_key=${API_KEY}&format=json&period=1month&limit=10`;
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        const tracks = data?.toptracks?.track || [];
+        const list = document.getElementById('my-rotation-list');
+        if (!tracks.length) {
+          list.innerHTML = '<li><span>No scrobbles yet</span></li>';
+          return;
+        }
+        list.innerHTML = tracks.map((t, i) => `
+          <li>
+            <span class="list-num">${String(i + 1).padStart(2, '0')}</span>
+            <span>${esc(t.name)}</span>
+            <span class="list-art">— ${esc(t.artist?.name || '')}</span>
+          </li>
+        `).join('');
+      })
+      .catch(() => {
+        const list = document.getElementById('my-rotation-list');
+        if (list) list.innerHTML = '<li><span style="opacity:0.6;">Last.fm unavailable</span></li>';
+      });
+  }
+</script>

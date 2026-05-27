@@ -2,36 +2,19 @@
 const { entry, featured = false } = Astro.props;
 const { data, slug } = entry;
 ---
-{featured ? (
-  <a href={`/reviews/${slug}/`} class="review-card stitched" style="background: var(--dark-3); color: var(--paper-soft); display: block;">
-    <div class="above-stitch" style="padding: 6px;">
-      <p class="kicker">★ Featured review</p>
-      <div style="display: grid; grid-template-columns: 160px 1fr; gap: 16px; align-items: center;">
-        <div class="cover" style="background: var(--warm-rust); margin: 0;">
-          {data.cover ? <img src={data.cover} alt={data.coverAlt ?? `${data.album} cover`} /> : 'Cover'}
-        </div>
-        <div>
-          <p class="rev-artist" style="opacity: 0.8;">{data.artist} — <i>{data.album}</i></p>
-          <h2 class="rev-title" style="font-size: 24px; color: var(--paper-soft);">{data.title}</h2>
-          <p class="kicker" style="margin-top: 12px;">tldr</p>
-          <div class="tldr large">
-            {data.tldr.map((t) => <span>{t}</span>)}
-          </div>
-        </div>
-      </div>
+<a
+  href={`/reviews/${slug}/`}
+  class="review-card stitched-tight"
+  style={featured ? "background: var(--living-blue); color: var(--paper-soft);" : ""}
+>
+  <div class="above-stitch" style="padding: 4px;">
+    <div class="cover">
+      {data.cover ? <img src={data.cover} alt={data.coverAlt ?? `${data.album} cover`} /> : 'Cover'}
     </div>
-  </a>
-) : (
-  <a href={`/reviews/${slug}/`} class="review-card stitched-tight">
-    <div class="above-stitch" style="padding: 4px;">
-      <div class="cover">
-        {data.cover ? <img src={data.cover} alt={data.coverAlt ?? `${data.album} cover`} /> : 'Cover'}
-      </div>
-      <p class="rev-artist">{data.artist}</p>
-      <h3 class="rev-title">{data.title}</h3>
-      <div class="tldr">
-        {data.tldr.map((t) => <span>{t}</span>)}
-      </div>
+    <p class="rev-artist">{data.artist}</p>
+    <h3 class="rev-title">{data.title}</h3>
+    <div class="tldr">
+      {data.tldr.map((t) => <span>{t}</span>)}
     </div>
-  </a>
-)}
+  </div>
+</a>

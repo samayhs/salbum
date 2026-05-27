@@ -1,24 +1,29 @@
 /* ===== salbum: hand-stitched zine theme ===== */
 
 :root {
-  /* warm room */
-  --paper: #F0997B;        /* coral wall */
-  --paper-soft: #FAEEDA;   /* card paper */
-  --paper-deep: #4A1B0C;   /* ink */
 
-  /* warm accents */
-  --warm-amber: #FAC775;
-  --warm-rust: #D85A30;
-  --warm-pink: #ED93B1;
+  /* warm room — the cozy backdrop */
+  --paper: #F7895B;        /* coral wall */
+  --paper-soft: #FBE5C9;   /* card paper */
+  --paper-deep: #621D00;   /* ink */
 
-  /* dark standouts */
-  --dark-1: #4A1B0C;       /* burnt umber */
-  --dark-2: #04342C;       /* forest */
-  --dark-3: #26215C;       /* indigo */
+  /* warm darks — three flavors of cozy depth */
+  --dark-1: #621D00;       /* mahogany */
+  --dark-2: #4A1228;       /* deep wine */
+  --dark-3: #2D1004;       /* near-black coffee */
 
-  /* the gold thread */
-  --stitch: #BA7517;
-  --stitch-bright: #EF9F27;
+  /* warm accents — for tags, small surfaces */
+  --warm-amber: #F5B847;
+  --warm-rust: #C44A1F;
+  --warm-pink: #E58B9E;
+
+  /* off-but-comforting — for live/current things */
+  --living-green: #2E4D3A;     /* deep planted, like a fern in shadow */
+  --living-blue: #1F2D4A;      /* night sky just after sunset */
+
+  /* the gold thread — 24k yellow */
+  --stitch: #E6B81C;
+  --stitch-bright: #F5D44A;
 
   --serif: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;

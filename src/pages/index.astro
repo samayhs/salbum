@@ -4,12 +4,11 @@ import Base from '../layouts/Base.astro';
 import ReviewCard from '../components/ReviewCard.astro';
 import ListCard from '../components/ListCard.astro';
 import LastFm from '../components/LastFm.astro';
+import MyRotation from '../components/MyRotation.astro';
 
 const reviews = (await getCollection('reviews')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
-const featured = reviews.find((r) => r.data.featured) ?? reviews[0];
-const otherReviews = reviews.filter((r) => r.slug !== featured?.slug).slice(0, 6);
 
 const lists = (await getCollection('lists')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -17,11 +16,9 @@ const lists = (await getCollection('lists')).sort(
 const latestList = lists[0];
 ---
 <Base title="salbum">
-  {featured && (
-    <section style="margin-bottom: 22px;">
-      <ReviewCard entry={featured} featured={true} />
-    </section>
-  )}
+  <LastFm />
+
+  <MyRotation />
 
   <div class="section">
     <span class="stamp">№ 01</span>
@@ -30,10 +27,8 @@ const latestList = lists[0];
   </div>
 
   <div class="review-grid">
-    {otherReviews.map((r) => <ReviewCard entry={r} />)}
+    {reviews.map((r) => <ReviewCard entry={r} featured={r.data.featured} />)}
   </div>
-
-  <LastFm />
 
   {latestList && (
     <>
