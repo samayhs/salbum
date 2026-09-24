@@ -1,0 +1,299 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import layout from '../data/layout.json';
+
+// The preview packs the real posts, so a tuning change shows the arrangement
+// you'll actually get. Mirrors the sizing rules in index.astro.
+const SIZE_CYCLE = ['l', 'm', 'm', 'l', 'm'];
+const boxes = (await getCollection('reviews'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .map((entry, i) => ({
+    id: entry.slug,
+    label: entry.data.artist || entry.slug,
+    importance: entry.data.featured ? 100 : 90 - i * 7,
+    size: entry.data.featured ? 'xl' : SIZE_CYCLE[i % SIZE_CYCLE.length],
+  }))
+  .concat([{ id: 'rotation', label: 'Last Four Weeks', importance: 35, size: 'l', aspect: 'square' }]);
+
+const today = new Date().toISOString().slice(0, 10);
+---
+<Base title="Admin — slog" noindex>
+  <div class="admin" data-boxes={JSON.stringify(boxes)} data-layout={JSON.stringify(layout)}>
+
+    <section class="patch admin-panel">
+      <div class="tags"><span class="tag">new post</span></div>
+      <h2 class="list-title">Write a post</h2>
+      <p class="admin-note">
+        Saving commits the markdown to the repo. Cloudflare Pages rebuilds on the
+        push, so the post is live in a minute or two.
+      </p>
+
+      <form id="post-form">
+        <label>Title <input name="title" required /></label>
+        <div class="row">
+          <label>Artist <input name="artist" required /></label>
+          <label>Album <input name="album" required /></label>
+        </div>
+        <div class="row">
+          <label>Label <input name="label" /></label>
+          <label>Year <input name="year" type="number" min="1900" max="2100" /></label>
+          <label>Published <input name="pubDate" type="date" value={today} /></label>
+        </div>
+        <fieldset>
+          <legend>Verdict — exactly three words</legend>
+          <div class="row">
+            <input name="tldr0" required />
+            <input name="tldr1" required />
+            <input name="tldr2" required />
+          </div>
+        </fieldset>
+        <div class="row">
+          <label>Tags <input name="tags" placeholder="reissue, loud" /></label>
+          <label>Cover path <input name="cover" placeholder="/covers/slug.jpg" /></label>
+        </div>
+        <label>Cover alt text <input name="coverAlt" /></label>
+        <label>Slug <input name="slug" placeholder="left blank, taken from the title" /></label>
+        <label class="check"><input name="featured" type="checkbox" /> Featured — the dark blue patch</label>
+        <label>Body <textarea name="body" rows="9" placeholder="Markdown."></textarea></label>
+        <button type="submit">Publish</button>
+        <p class="admin-status" id="post-status"></p>
+      </form>
+    </section>
+
+    <section class="patch admin-panel">
+      <div class="tags"><span class="tag">layout</span></div>
+      <h2 class="list-title">Tune the wedge</h2>
+      <p class="admin-note">
+        Live preview of the real posts. Saving writes <code>src/data/layout.json</code>
+        and triggers a rebuild.
+      </p>
+
+      <div class="tuner">
+        <label>taper <input type="range" id="taper" min="0" max="1" step="0.05" /><output></output></label>
+        <label>chaos <input type="range" id="chaos" min="0" max="1" step="0.05" /><output></output></label>
+        <label>seed <input type="range" id="seed" min="1" max="60" step="1" /><output></output></label>
+        <label>gap <input type="range" id="gap" min="0" max="40" step="1" /><output></output></label>
+        <label>minScale <input type="range" id="minScale" min="0.5" max="1" step="0.01" /><output></output></label>
+        <label>baseHeightMin <input type="range" id="baseHeightMin" min="80" max="400" step="2" /><output></output></label>
+        <label>baseHeightRatio <input type="range" id="baseHeightRatio" min="0.05" max="0.4" step="0.01" /><output></output></label>
+      </div>
+
+      <div class="preview" id="preview"></div>
+
+      <button type="button" id="layout-save">Save layout</button>
+      <button type="button" id="layout-reset" class="ghost">Reset</button>
+      <p class="admin-status" id="layout-status"></p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .admin { display: grid; gap: 16px; }
+  .admin-panel { padding: 20px; }
+  .admin-note { font-size: 13px; opacity: 0.75; margin: 0 0 16px; max-width: 60ch; }
+  .admin-note code { font-family: var(--mono); font-size: 12px; }
+
+  form { display: grid; gap: 10px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > * { flex: 1 1 140px; }
+  label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  label.check { display: flex; align-items: center; gap: 8px; text-transform: none; letter-spacing: 1px; }
+  label.check input { width: auto; }
+  input, textarea {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    padding: 7px 9px;
+    font-family: var(--sans);
+    font-size: 14px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--paper-deep);
+    background: #fff;
+    border: 1.5px dashed var(--stitch);
+    border-radius: 0;
+  }
+  input:focus, textarea:focus { outline: 2px solid var(--warm-rust); outline-offset: 1px; }
+  textarea { font-family: var(--mono); font-size: 13px; resize: vertical; }
+  fieldset { border: 1.5px dashed var(--stitch); margin: 0; padding: 10px; }
+  legend {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 0 6px;
+  }
+
+  button {
+    justify-self: start;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 9px 16px;
+    color: var(--paper-soft);
+    background: var(--paper-deep);
+    border: 1.5px dashed var(--stitch-bright);
+    cursor: pointer;
+  }
+  button.ghost { background: transparent; color: var(--paper-deep); border-color: var(--stitch); }
+  button[disabled] { opacity: 0.5; cursor: default; }
+
+  .admin-status { font-family: var(--mono); font-size: 11px; margin: 10px 0 0; min-height: 1.4em; }
+  .admin-status.bad { color: #8c1c0c; }
+
+  .tuner { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 16px; }
+  .tuner label { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; }
+  .tuner input { margin: 0; padding: 0; border: none; background: none; }
+  .tuner output { font-size: 11px; opacity: 0.8; min-width: 4ch; text-align: right; }
+
+  .preview {
+    position: relative;
+    margin: 16px 0;
+    background: var(--paper);
+    border: 1.5px dashed var(--stitch);
+    overflow: hidden;
+  }
+  /* These tiles are built by the script, so they never get the scope
+     attribute Astro adds to elements written in the template. */
+  .preview :global(div) {
+    position: absolute;
+    background: var(--dark-2);
+    color: var(--paper-soft);
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 5px;
+    overflow: hidden;
+    border: 1px dashed var(--stitch-bright);
+  }
+  .preview :global(div.hot) { background: var(--living-blue); }
+</style>
+
+<script>
+  import '../scripts/triangleLayout.js';
+
+  const root = document.querySelector('.admin');
+  const boxes = JSON.parse(root.dataset.boxes);
+  const saved = JSON.parse(root.dataset.layout);
+
+  const KNOBS = ['taper', 'chaos', 'seed', 'gap', 'minScale', 'baseHeightMin', 'baseHeightRatio'];
+  const inputs = Object.fromEntries(KNOBS.map((k) => [k, document.getElementById(k)]));
+  const preview = document.getElementById('preview');
+
+  function values() {
+    return Object.fromEntries(KNOBS.map((k) => [k, Number(inputs[k].value)]));
+  }
+
+  function draw() {
+    const cfg = values();
+    for (const k of KNOBS) inputs[k].nextElementSibling.value = cfg[k];
+
+    const width = preview.clientWidth || 600;
+    const res = window.TriangleLayout.layoutTriangle(boxes, {
+      width,
+      gap: cfg.gap,
+      taper: cfg.taper,
+      chaos: cfg.chaos,
+      seed: cfg.seed,
+      minScale: cfg.minScale,
+      baseHeight: Math.max(cfg.baseHeightMin, width * cfg.baseHeightRatio),
+    });
+
+    // The real homepage is wider than this panel; scale the result to fit.
+    const scale = Math.min(1, 520 / Math.max(1, res.height));
+    preview.style.height = `${res.height * scale}px`;
+    preview.innerHTML = '';
+    for (const b of res.boxes) {
+      const el = document.createElement('div');
+      const meta = boxes.find((x) => x.id === b.id);
+      el.textContent = meta?.label ?? b.id;
+      if (b.importance >= 100) el.classList.add('hot');
+      el.style.left = `${b.x * scale}px`;
+      el.style.top = `${b.y * scale}px`;
+      el.style.width = `${b.w * scale}px`;
+      el.style.height = `${b.h * scale}px`;
+      preview.append(el);
+    }
+  }
+
+  function load(cfg) {
+    for (const k of KNOBS) inputs[k].value = cfg[k];
+    draw();
+  }
+
+  for (const k of KNOBS) inputs[k].addEventListener('input', draw);
+  addEventListener('resize', draw);
+  load(saved);
+
+  function status(el, message, bad = false) {
+    el.textContent = message;
+    el.classList.toggle('bad', bad);
+  }
+
+  async function send(url, payload, statusEl, button, onOk) {
+    button.disabled = true;
+    status(statusEl, 'Saving…');
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+      onOk(data);
+    } catch (err) {
+      status(statusEl, err.message, true);
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  const layoutStatus = document.getElementById('layout-status');
+  const layoutSave = document.getElementById('layout-save');
+  layoutSave.addEventListener('click', () => {
+    send('/api/layout', values(), layoutStatus, layoutSave, () =>
+      status(layoutStatus, 'Saved. Rebuilding — live in a minute or two.')
+    );
+  });
+  document.getElementById('layout-reset').addEventListener('click', () => {
+    load(saved);
+    status(layoutStatus, 'Back to the saved values.');
+  });
+
+  const form = document.getElementById('post-form');
+  const postStatus = document.getElementById('post-status');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = new FormData(form);
+    const payload = {
+      title: f.get('title'),
+      artist: f.get('artist'),
+      album: f.get('album'),
+      label: f.get('label'),
+      year: f.get('year') ? Number(f.get('year')) : undefined,
+      pubDate: f.get('pubDate'),
+      tldr: [f.get('tldr0'), f.get('tldr1'), f.get('tldr2')],
+      tags: String(f.get('tags') || '').split(',').map((t) => t.trim()).filter(Boolean),
+      cover: f.get('cover'),
+      coverAlt: f.get('coverAlt'),
+      slug: f.get('slug'),
+      featured: f.get('featured') === 'on',
+      body: f.get('body'),
+    };
+    const button = form.querySelector('button[type="submit"]');
+    send('/api/posts', payload, postStatus, button, (data) => {
+      status(postStatus, `Committed as ${data.slug}.md — live at ${data.url} shortly.`);
+      form.reset();
+    });
+  });
+</script>

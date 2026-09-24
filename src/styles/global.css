@@ -1,10 +1,10 @@
-/* ===== salbum: hand-stitched zine theme ===== */
+/* ===== slog: patches stitched onto cloth ===== */
 
 :root {
 
   /* warm room — the cozy backdrop */
   --paper: #F7895B;        /* coral wall */
-  --paper-soft: #FBE5C9;   /* card paper */
+  --paper-soft: #FBE5C9;   /* patch cloth */
   --paper-deep: #621D00;   /* ink */
 
   /* warm darks — three flavors of cozy depth */
@@ -41,54 +41,105 @@ html, body {
   line-height: 1.6;
 }
 
-/* Reusable stitched border:
-   apply .stitched to any element to get a dashed gold inner border.
-   .stitched-tight for thinner items, .stitched-bold for hero pieces. */
+/* ===== The patch =====
+   A rectangle of cloth sewn onto the bolt: no rounding, gold thread
+   running just inside the edge, a shadow so it sits proud of the weave. */
 
-.stitched,
-.stitched-tight,
-.stitched-bold {
+.patch {
   position: relative;
-  border-radius: 4px;
+  display: block;
+  background: var(--paper-soft);
+  color: var(--paper-deep);
+  padding: 14px;
+  text-decoration: none;
+  box-shadow:
+    0 1px 0 rgba(45, 16, 4, 0.22),
+    0 7px 16px rgba(45, 16, 4, 0.16);
 }
-.stitched::before,
-.stitched-tight::before,
-.stitched-bold::before {
+.patch::before {
   content: "";
   position: absolute;
+  inset: 7px;
   border: 2px dashed var(--stitch);
-  border-radius: 3px;
   pointer-events: none;
 }
-.stitched::before        { inset: 6px; }
-.stitched-tight::before  { inset: 4px; border-width: 1.5px; }
-.stitched-bold::before   { inset: 8px; border-width: 2.5px; }
+.patch > * { position: relative; z-index: 1; }
 
-/* On dark surfaces, stitch goes bright gold */
-.on-dark.stitched::before,
-.on-dark.stitched-tight::before,
-.on-dark.stitched-bold::before {
-  border-color: var(--stitch-bright);
+.patch.tight { padding: 11px; }
+.patch.tight::before { inset: 5px; border-width: 1.5px; }
+
+/* Dark patches take the bright thread */
+.patch.on-dark { color: var(--paper-soft); }
+.patch.on-dark::before { border-color: var(--stitch-bright); }
+.patch.umber  { background: var(--dark-1); }
+.patch.wine   { background: var(--dark-2); }
+.patch.coffee { background: var(--dark-3); }
+.patch.forest { background: var(--living-green); }
+.patch.night  { background: var(--living-blue); }
+
+/* ===== The jumble =====
+   Patches are dropped one at a time onto a skyline and interlock at
+   whatever height they land, inside a shape that tapers as it descends.
+   triangleLayout.js does the packing; this is just the stage it plays on.
+
+   Until the packer runs (and on narrow screens, where a collage of
+   tiny tiles would be unreadable) this stays an ordinary grid. */
+
+/* Now playing takes the whole top band on its own, above the wedge */
+.lastfm-block { margin: 0 0 10px; }
+
+.fabric {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  align-items: start;
 }
 
-/* Use this on any inner wrapper that should sit above the ::before stitch */
-.above-stitch { position: relative; z-index: 1; }
+.fabric.laid {
+  display: block;
+  gap: 0;
+}
+.fabric.laid > * {
+  position: absolute;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-/* Layout */
+/* Inside a packed box the height is fixed, so the cover takes whatever
+   is left over after the text — big boxes get big covers, short ones don't. */
+.fabric.laid .cover {
+  flex: 1 1 60px;
+  min-height: 60px;
+  max-height: none;
+  aspect-ratio: auto;
+}
+/* A box too short to hold a cover and its text drops the cover rather than
+   squashing it into a sliver. The script measures and tags these. */
+.fabric.laid > .squat .cover { display: none; }
+.fabric.laid .rev-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.fabric.laid ol { flex: 0 1 auto; min-height: 0; overflow: hidden; }
+
+@media (max-width: 640px) {
+  .fabric { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  /* The now-playing row needs the full width before its cover and text collide */
+  .fabric:not(.laid) .lastfm-block { grid-column: 1 / -1; }
+}
+
+/* ===== Masthead — ink straight on the cloth, no panel, no rule ===== */
 
 .room {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 28px 20px;
+  padding: 28px 20px 40px;
 }
-
-.page {
-  background: var(--paper);
-  padding: 20px;
-  border-radius: 6px;
-}
-
-/* Masthead */
 
 .masthead {
   display: flex;
@@ -96,9 +147,7 @@ html, body {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding-bottom: 14px;
-  border-bottom: 2.5px dashed var(--stitch);
-  margin-bottom: 18px;
+  margin-bottom: 30px;
 }
 .masthead h1 {
   font-family: var(--serif);
@@ -110,11 +159,7 @@ html, body {
   color: var(--paper-deep);
   transform: skew(-4deg);
 }
-.masthead h1 em {
-  font-style: italic;
-  color: var(--dark-2);
-}
-/* masthead asterisk */
+.masthead h1 a { color: inherit; text-decoration: none; }
 .masthead h1 .ast {
   display: inline-flex;
   align-items: center;
@@ -124,11 +169,7 @@ html, body {
   margin: 0 0.02em;
   vertical-align: 0.22em;
 }
-.masthead h1 .ast svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
+.masthead h1 .ast svg { width: 100%; height: 100%; overflow: visible; }
 
 .masthead-sub {
   font-family: var(--mono);
@@ -140,66 +181,25 @@ html, body {
   line-height: 1.5;
 }
 
-/* Nav */
+/* ===== Tags — kept, but they label, they don't navigate ===== */
 
-.nav {
+.tags {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 22px;
-  font-family: var(--mono);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+  margin: 0 0 10px;
 }
-.nav a {
-  padding: 4px 10px;
-  border: 1.5px dashed var(--stitch);
-  background: var(--paper-soft);
-  color: var(--paper-deep);
-  text-decoration: none;
-}
-.nav a:hover,
-.nav a[aria-current="page"] {
-  background: var(--paper-deep);
-  color: var(--paper-soft);
-  border-style: solid;
-  border-color: var(--stitch-bright);
-}
-
-/* Section heading */
-
-.section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 26px 0 14px;
-}
-.section h2 {
-  font-family: var(--serif);
-  font-size: clamp(24px, 4vw, 32px);
-  margin: 0;
-  font-weight: 500;
-  letter-spacing: -0.5px;
-  color: var(--paper-deep);
-  transform: skew(-3deg);
-}
-.section .stamp {
+.tag {
   font-family: var(--mono);
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  border: 1.5px dashed var(--stitch);
   padding: 3px 8px;
-  color: var(--paper-deep);
-  background: var(--paper-soft);
+  border: 1.5px dashed var(--stitch);
+  background: rgba(255, 255, 255, 0.22);
+  color: inherit;
 }
-.section .rule {
-  flex: 1;
-  border-top: 2px dashed var(--stitch);
-}
-
-/* Cards / grids */
+.on-dark .tag { border-color: var(--stitch-bright); background: rgba(0, 0, 0, 0.18); }
 
 .kicker {
   font-family: var(--mono);
@@ -210,29 +210,12 @@ html, body {
   opacity: 0.85;
 }
 
-.review-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-}
-.review-card {
-  background: var(--paper-soft);
-  padding: 12px;
-  color: var(--paper-deep);
-}
-.review-card:nth-child(3n+1) { transform: rotate(-0.6deg); }
-.review-card:nth-child(3n+2) { transform: rotate(0.5deg); }
-.review-card:nth-child(3n+3) { transform: rotate(-0.3deg); }
-
-.review-card a {
-  color: inherit;
-  text-decoration: none;
-}
+/* ===== Post patch innards ===== */
 
 .cover {
   width: 100%;
-  aspect-ratio: 1/1;
-  border-radius: 3px;
+  aspect-ratio: 5/3;
+  max-height: 180px;
   margin-bottom: 10px;
   background: var(--warm-amber);
   display: flex;
@@ -244,12 +227,7 @@ html, body {
   letter-spacing: 1.5px;
   color: var(--paper-deep);
 }
-.cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 3px;
-}
+.cover img { width: 100%; height: 100%; object-fit: cover; }
 
 .rev-artist {
   font-family: var(--mono);
@@ -261,18 +239,14 @@ html, body {
 }
 .rev-title {
   font-family: var(--serif);
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 500;
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   line-height: 1.15;
   letter-spacing: -0.3px;
 }
 
-.tldr {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
+.tldr { display: flex; gap: 6px; flex-wrap: wrap; }
 .tldr span {
   font-family: var(--mono);
   font-size: 11px;
@@ -285,71 +259,45 @@ html, body {
   background: var(--paper-soft);
 }
 .tldr span:nth-child(1) { background: var(--warm-amber); transform: rotate(-1.5deg); }
-.tldr span:nth-child(2) { background: var(--warm-pink); transform: rotate(1deg); }
+.tldr span:nth-child(2) { background: var(--warm-pink);  transform: rotate(1deg); }
 .tldr span:nth-child(3) { background: var(--living-green); color: var(--paper-soft); transform: rotate(-0.5deg); }
+.tldr.large span { font-size: 14px; padding: 5px 10px; }
 
-.tldr.large span {
-  font-size: 14px;
-  padding: 5px 10px;
-}
+/* ===== List patch innards ===== */
 
-/* Lists block */
-
-.list-card {
-  background: var(--dark-2);
-  color: var(--paper-soft);
-  padding: 22px 24px;
-  border-radius: 4px;
-  transform: rotate(-0.3deg);
-}
-.list-card.umber { background: var(--dark-1); }
-.list-card.indigo { background: var(--dark-3); }
-
-.list-card h3 {
+.list-title {
   font-family: var(--serif);
-  font-size: clamp(22px, 3.4vw, 30px);
+  font-size: 19px;
   font-weight: 500;
-  margin: 4px 0 14px;
+  margin: 4px 0 10px;
   letter-spacing: -0.5px;
 }
-.list-card a { color: inherit; text-decoration: none; }
-.list-card ol {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.list-card li {
+.patch ol { list-style: none; padding: 0; margin: 0; }
+.patch ol li {
   display: flex;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1.5px dashed rgba(245, 212, 74, 0.5);
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1.5px dashed rgba(245, 212, 74, 0.45);
   align-items: baseline;
-  font-size: 15px;
-}
-.list-card li:last-child { border-bottom: none; }
-.list-num {
-  font-family: var(--mono);
-  font-size: 18px;
-  font-weight: 500;
-  min-width: 32px;
-  color: var(--stitch-bright);
-}
-.list-art {
-  font-style: italic;
-  opacity: 0.75;
-  margin-left: 6px;
   font-size: 13px;
 }
+.patch ol li:last-child { border-bottom: none; }
+.list-num {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 24px;
+  color: var(--stitch-bright);
+}
+.patch:not(.on-dark) .list-num { color: var(--warm-rust); }
+.list-art { font-style: italic; opacity: 0.75; margin-left: 6px; font-size: 13px; }
 
-/* Article (review/list detail page) */
+/* ===== Article — one big patch, the post itself ===== */
 
 article.prose {
-  background: var(--paper-soft);
-  padding: 32px;
+  max-width: 760px;
   margin: 0 auto;
-  max-width: 720px;
-  border-radius: 4px;
-  color: var(--paper-deep);
+  padding: 38px;
 }
 article.prose h1 {
   font-family: var(--serif);
@@ -367,9 +315,7 @@ article.prose .meta {
   margin-bottom: 18px;
   opacity: 0.7;
 }
-article.prose .tldr.large {
-  margin: 16px 0 24px;
-}
+article.prose .tldr.large { margin: 16px 0 24px; }
 article.prose h2 {
   font-family: var(--serif);
   font-size: 24px;
@@ -377,11 +323,7 @@ article.prose h2 {
   margin-top: 28px;
   letter-spacing: -0.3px;
 }
-article.prose p {
-  font-size: 17px;
-  line-height: 1.7;
-  margin: 14px 0;
-}
+article.prose p { font-size: 17px; line-height: 1.7; margin: 14px 0; }
 article.prose blockquote {
   border-left: 3px dashed var(--stitch);
   padding-left: 16px;
@@ -396,12 +338,24 @@ article.prose a {
   text-underline-offset: 3px;
 }
 
-/* Footer */
+/* Back to the cloth — the only way out of a post */
+.back {
+  display: inline-block;
+  margin: 26px auto 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--paper-deep);
+  text-decoration: none;
+  border-bottom: 1.5px dashed var(--stitch);
+}
+.back-wrap { max-width: 760px; margin: 0 auto; }
+
+/* ===== Footer — selvage edge, no rule ===== */
 
 .foot {
-  margin-top: 26px;
-  padding-top: 14px;
-  border-top: 2.5px dashed var(--stitch);
+  margin-top: 40px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -411,4 +365,5 @@ article.prose a {
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: var(--paper-deep);
+  opacity: 0.8;
 }

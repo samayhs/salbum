@@ -18,22 +18,26 @@ const dateStr = d.pubDate.toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric',
 });
+const tags = ['review', ...d.tags];
 ---
-<Base title={`${d.artist} — ${d.album} | salbum`} description={d.title}>
-  <article class="prose stitched">
-    <div class="above-stitch" style="padding: 8px;">
-      <p class="meta">Review · {dateStr}</p>
-      <h1>{d.title}</h1>
-      <p style="font-family: var(--mono); font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin: 6px 0 0;">
-        {d.artist} — <i>{d.album}</i>
-        {d.label && ` (${d.label}${d.year ? `, ${d.year}` : ''})`}
-      </p>
-
-      <div class="tldr large">
-        {d.tldr.map((t) => <span>{t}</span>)}
-      </div>
-
-      <Content />
+<Base title={`${d.artist} — ${d.album} | slog`} description={d.title}>
+  <article class="prose patch">
+    <div class="tags">
+      {tags.map((t) => <span class="tag">{t}</span>)}
     </div>
+    <p class="meta">{dateStr}</p>
+    <h1>{d.title}</h1>
+    <p style="font-family: var(--mono); font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin: 6px 0 0;">
+      {d.artist} — <i>{d.album}</i>
+      {d.label && ` (${d.label}${d.year ? `, ${d.year}` : ''})`}
+    </p>
+
+    <div class="tldr large">
+      {d.tldr.map((t) => <span>{t}</span>)}
+    </div>
+
+    <Content />
   </article>
+
+  <div class="back-wrap"><a class="back" href="/">← back to the cloth</a></div>
 </Base>

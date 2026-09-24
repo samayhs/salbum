@@ -3,17 +3,21 @@ const LASTFM_API_KEY = 'f6ae9b2d73bdb0e7f2b6b8b06ac44563';
 const LASTFM_USER    = 'samayhs';
 ---
 
-<div class="list-card on-dark stitched my-rotation-card"
+<div class="patch on-dark wine my-rotation-card"
      data-api-key={LASTFM_API_KEY}
      data-user={LASTFM_USER}
-     style="margin: 22px 0;">
-  <div class="above-stitch" style="padding: 4px;">
-    <p class="kicker">Last.fm · last 4 weeks</p>
-    <h3>Last Four Weeks</h3>
-    <ol id="my-rotation-list">
-      <li><span class="list-num">—</span> <span style="opacity:0.6; font-style:italic;">Loading…</span></li>
-    </ol>
+     data-box="rotation"
+     data-importance="35"
+     data-size="l"
+     data-aspect="square">
+  <div class="tags">
+    <span class="tag">last.fm</span>
+    <span class="tag">4 weeks</span>
   </div>
+  <h3 class="list-title">Last Four Weeks</h3>
+  <ol id="my-rotation-list">
+    <li><span class="list-num">—</span> <span style="opacity:0.6; font-style:italic;">Loading…</span></li>
+  </ol>
 </div>
 
 <script>

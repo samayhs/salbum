@@ -7,37 +7,27 @@ const LASTFM_USER    = 'samayhs';
 // ============================================================
 ---
 
-<section class="lastfm-block stitched" data-api-key={LASTFM_API_KEY} data-user={LASTFM_USER}>
-  <div class="above-stitch" style="padding: 6px;">
-    <div class="section" style="margin: 0 0 12px;">
-      <span class="stamp">Scrobbles</span>
-      <h2>Now Pl*ying</h2>
-      <div class="rule"></div>
-    </div>
+<div
+  class="patch on-dark forest lastfm-block"
+  data-api-key={LASTFM_API_KEY}
+  data-user={LASTFM_USER}
+>
+  <div class="tags">
+    <span class="tag">scrobbles</span>
+  </div>
+  <h3 class="list-title">Now Pl*ying</h3>
 
-    <div class="lastfm-now">
-
-      <div class="now-row" id="lastfm-now">
-        <div class="now-cover" id="lastfm-now-cover"></div>
-        <div class="now-text">
-          <p class="now-track" id="lastfm-now-track">Loading…</p>
-          <p class="now-artist" id="lastfm-now-artist"></p>
-          <p class="now-status" id="lastfm-now-status"></p>
-        </div>
-      </div>
+  <div class="now-row" id="lastfm-now">
+    <div class="now-cover" id="lastfm-now-cover"></div>
+    <div class="now-text">
+      <p class="now-track" id="lastfm-now-track">Loading…</p>
+      <p class="now-artist" id="lastfm-now-artist"></p>
+      <p class="now-status" id="lastfm-now-status"></p>
     </div>
   </div>
-</section>
+</div>
 
 <style is:global>
-  .lastfm-block {
-    background: var(--living-green);
-    color: var(--paper-soft);
-    padding: 16px;
-    border-radius: 4px;
-    margin: 22px 0;
-  }
-  .lastfm-block .section h2 { color: var(--paper-soft); }
   .now-row {
     display: flex;
     gap: 12px;
@@ -45,7 +35,6 @@ const LASTFM_USER    = 'samayhs';
     background: var(--paper-soft);
     color: var(--paper-deep);
     padding: 10px;
-    border-radius: 4px;
     border: 1.5px dashed var(--stitch);
     min-height: 84px;
   }
@@ -54,7 +43,6 @@ const LASTFM_USER    = 'samayhs';
     height: 64px;
     flex-shrink: 0;
     background: var(--warm-rust);
-    border-radius: 3px;
     background-size: cover;
     background-position: center;
   }
@@ -84,8 +72,8 @@ const LASTFM_USER    = 'samayhs';
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin: 6px 0 0;
-    color: var(--paper-soft);
-    opacity: 0.75;
+    color: var(--paper-deep);
+    opacity: 0.7;
   }
   .now-status.live::before {
     content: "●";
@@ -96,12 +84,6 @@ const LASTFM_USER    = 'samayhs';
   @keyframes lastfm-pulse {
     0%, 100% { opacity: 1; }
     50%      { opacity: 0.3; }
-  }
-  .lastfm-error {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--paper-soft);
-    opacity: 0.7;
   }
 </style>
 
@@ -157,12 +139,6 @@ const LASTFM_USER    = 'samayhs';
         statusEl.className = 'now-status';
         statusEl.textContent = `Last played · ${ago}`;
       }
-    }
-
-    function escape(s) {
-      return String(s).replace(/[&<>"']/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-      }[c]));
     }
 
     function showError(msg) {

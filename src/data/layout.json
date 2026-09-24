@@ -1,0 +1,9 @@
+{
+  "gap": 10,
+  "taper": 0.7,
+  "chaos": 0.55,
+  "seed": 3,
+  "minScale": 0.88,
+  "baseHeightMin": 158,
+  "baseHeightRatio": 0.17
+}

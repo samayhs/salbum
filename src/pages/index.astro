@@ -4,23 +4,90 @@ import Base from '../layouts/Base.astro';
 import ReviewCard from '../components/ReviewCard.astro';
 import LastFm from '../components/LastFm.astro';
 import MyRotation from '../components/MyRotation.astro';
+import layout from '../data/layout.json';
 
-const reviews = (await getCollection('reviews')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+// No 's' or 'xs' here: a post patch carries a cover, tags, a title and three
+// verdict chips, and anything shorter than 'm' clips them.
+const SIZE_CYCLE = ['l', 'm', 'm', 'l', 'm'];
+
+const posts = (await getCollection('reviews'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .map((entry, i) => ({
+    entry,
+    importance: entry.data.featured ? 100 : 90 - i * 7,
+    size: entry.data.featured ? 'xl' : SIZE_CYCLE[i % SIZE_CYCLE.length],
+  }));
 ---
-<Base title="salbum">
+<Base title="slog">
   <LastFm />
 
-  <div class="section">
-    <span class="stamp">№ 01</span>
-    <h2>Latest reviews</h2>
-    <div class="rule"></div>
-  </div>
+  <div class="fabric" data-layout={JSON.stringify(layout)}>
+    {posts.map(({ entry, importance, size }) => (
+      <ReviewCard entry={entry} featured={entry.data.featured} importance={importance} size={size} />
+    ))}
 
-  <div class="review-grid">
-    {reviews.map((r) => <ReviewCard entry={r} featured={r.data.featured} />)}
+    <MyRotation />
   </div>
-
-  <MyRotation />
 </Base>
+
+<script>
+  import '../scripts/triangleLayout.js';
+
+  const stage = document.querySelector('.fabric');
+  if (stage) {
+    // Below this the wedge would be a column of slivers — stay on the grid.
+    const MIN_WIDTH = 720;
+    const items = [...stage.children];
+    const cfg = JSON.parse(stage.dataset.layout);
+
+    function relayout() {
+      const width = stage.clientWidth;
+      if (width < MIN_WIDTH || !window.TriangleLayout) {
+        stage.classList.remove('laid');
+        stage.style.height = '';
+        for (const el of items) el.removeAttribute('style');
+        return;
+      }
+
+      const { boxes, height } = window.TriangleLayout.layoutTriangle(
+        items.map((el, i) => ({
+          id: el.dataset.box || String(i),
+          importance: Number(el.dataset.importance) || 0,
+          size: el.dataset.size || 'm',
+          ...(el.dataset.aspect ? { aspect: el.dataset.aspect } : {}),
+        })),
+        {
+          width,
+          gap: cfg.gap,
+          // The packer's default (10% of width) is sized for photos. These
+          // boxes hold headings, tags and chips, so they need roughly twice that.
+          baseHeight: Math.max(cfg.baseHeightMin, width * cfg.baseHeightRatio),
+          taper: cfg.taper,
+          chaos: cfg.chaos,
+          // Below ~0.85 a box can shrink far enough to clip its own text.
+          minScale: cfg.minScale,
+          seed: cfg.seed,
+        }
+      );
+
+      const at = new Map(boxes.map((b) => [b.id, b]));
+      stage.classList.add('laid');
+      stage.style.height = `${height}px`;
+
+      items.forEach((el, i) => {
+        const b = at.get(el.dataset.box || String(i));
+        if (!b) return;
+        el.style.left = `${b.x}px`;
+        el.style.top = `${b.y}px`;
+        el.style.width = `${b.w}px`;
+        el.style.height = `${b.h}px`;
+        // Cover (60px min) plus tags, artist, title and chips needs ~210px.
+        el.classList.toggle('squat', b.h < 210);
+      });
+    }
+
+    relayout();
+    addEventListener('resize', relayout);
+    document.fonts?.ready.then(relayout);
+  }
+</script>

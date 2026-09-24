@@ -1,20 +1,24 @@
 ---
-const { entry, featured = false } = Astro.props;
+const { entry, featured = false, importance = 0, size = 'm' } = Astro.props;
 const { data, slug } = entry;
+const tags = ['review', ...data.tags];
 ---
 <a
   href={`/reviews/${slug}/`}
-  class="review-card stitched-tight"
-  style={featured ? "background: var(--living-blue); color: var(--paper-soft);" : ""}
+  class={`patch tight${featured ? ' on-dark night' : ''}`}
+  data-box={slug}
+  data-importance={importance}
+  data-size={size}
 >
-  <div class="above-stitch" style="padding: 4px;">
-    <div class="cover">
-      {data.cover ? <img src={data.cover} alt={data.coverAlt ?? `${data.album} cover`} /> : 'Cover'}
-    </div>
-    <p class="rev-artist">{data.artist}</p>
-    <h3 class="rev-title">{data.title}</h3>
-    <div class="tldr">
-      {data.tldr.map((t) => <span>{t}</span>)}
-    </div>
+  <div class="cover">
+    {data.cover ? <img src={data.cover} alt={data.coverAlt ?? `${data.album} cover`} /> : 'Cover'}
+  </div>
+  <div class="tags">
+    {tags.map((t) => <span class="tag">{t}</span>)}
+  </div>
+  <p class="rev-artist">{data.artist}</p>
+  <h3 class="rev-title">{data.title}</h3>
+  <div class="tldr">
+    {data.tldr.map((t) => <span>{t}</span>)}
   </div>
 </a>
